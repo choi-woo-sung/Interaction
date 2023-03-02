@@ -179,6 +179,14 @@ fun ayPath(aYs: List<Int>, size: Size, currentY: Float, animatedY: Float): Path 
     }
 }
 
+/**
+ *
+ *
+ * @param height 캔버스의 높이
+ * @param waterLevel 물로채워야하는 컨테이너 높이
+ * @param intensityMultiplier 파도의 강도
+ * @return
+ */
 @Composable
 fun calculateYs(height: Int, waterLevel: Float, intensityMultiplier: Float): List<Int> {
     val total = 6
