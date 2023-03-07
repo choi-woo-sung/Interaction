@@ -113,6 +113,7 @@ fun AutoSizeTextField(
 
 ) {
     minFontSize 
+    fontSize.value
     val density = LocalDensity.current
     BoxWithConstraints(
         modifier = modifier,
