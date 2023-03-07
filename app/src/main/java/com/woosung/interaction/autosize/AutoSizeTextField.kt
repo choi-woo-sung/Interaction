@@ -1,5 +1,6 @@
 package com.woosung.interaction.autosize
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.woosung.interaction.ext.dpToPx
+import com.woosung.interaction.ext.pxToDp
 import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,13 +48,15 @@ fun AutoSizableOutLinedTextField(
     minFontSize: TextUnit,
     scaleFactor: Float = 0.9f,
 ) {
+    val density = LocalDensity.current
+
     BoxWithConstraints(
         modifier = modifier,
     ) {
         // 폰트사이즈가 알아서 변경되어야함.
         var nFontSize = fontSize
 
-        val calculateParagraph = @Composable {
+        val calculateParagraph = @Composable{
             Paragraph(
                 text = value,
                 style = TextStyle(fontSize = nFontSize),
@@ -66,11 +70,18 @@ fun AutoSizableOutLinedTextField(
             )
         }
 
+
         var intrinsics = calculateParagraph()
 
+        //입력할때마다 축소된값으로 변경
         with(LocalDensity.current) {
             while ((intrinsics.height.toDp() > maxHeight || intrinsics.didExceedMaxLines) && nFontSize >= minFontSize) {
+                Log.d("intrinsics", intrinsics.height.pxToDp(density).toString())
+                Log.d("maxHeight", maxHeight.dpToPx(density).toString())
+                Log.d("minHeight", minHeight.dpToPx(density).toString())
+                Log.d("didExceedMaxLines", intrinsics.didExceedMaxLines.toString())
                 nFontSize *= scaleFactor
+                //Log.d
                 intrinsics = calculateParagraph()
             }
         }
@@ -87,6 +98,9 @@ fun AutoSizableOutLinedTextField(
     }
 }
 
+
+
+
 @Composable
 fun AutoSizeTextField(
     value: String,
@@ -98,7 +112,6 @@ fun AutoSizeTextField(
     scaleFactor: Float = 0.9f,
 
 ) {
-
     val density = LocalDensity.current
     BoxWithConstraints(
         modifier = modifier,
@@ -108,12 +121,17 @@ fun AutoSizeTextField(
         // https://developer.android.com/jetpack/compose/text
         BasicTextField(
             value = value,
-            maxLines = 3,
+            maxLines = 2,
             onValueChange = onValueChange,
             textStyle = TextStyle.Default.copy(fontSize = resizedStyle),
             onTextLayout = { result ->
-                if (with(density) { result.multiParagraph.height > minHeight.toPx() }) {
-                    resizedStyle = resizedStyle * scaleFactor
+                //크기가 height에 벗어나려고 할때()  or  lineCount가 벗어날때
+                if (with(density) { result.multiParagraph.height > minHeight.toPx() } || result.lineCount > maxLines+1) {
+                    Log.d("multiParagraph", result.multiParagraph.height.toString())
+                    Log.d("didExceedMaxLines", result.multiParagraph.didExceedMaxLines.toString())
+                    Log.d("minheight", minHeight.dpToPx(density).toString())
+                    // 폰트사이즈를 감소시킨다.
+                    resizedStyle *= scaleFactor
                 }
             },
         )
