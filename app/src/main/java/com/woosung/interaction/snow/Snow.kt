@@ -126,8 +126,7 @@ internal class Snowflake(
 
     fun update(elapsedMillis: Long) {
         // 초마다 움직이는 증가량
-        val increment =
-            incrementFactor * (elapsedMillis / baseFrameDurationMillis) * baseSpeedPxAt60Fps
+        val increment = incrementFactor * (elapsedMillis / baseFrameDurationMillis) * baseSpeedPxAt60Fps
 
         val xDelta = (increment * cos(angle)).toFloat()
 
