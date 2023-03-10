@@ -21,6 +21,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.nanoseconds
 
 internal fun Modifier.snowfall() = composed {
@@ -56,14 +57,13 @@ internal fun Modifier.snowfall() = composed {
 fun ClosedRange<Float>.random() =
     ThreadLocalRandom.current().nextFloat() * (endInclusive - start) + start
 
-fun Float.random() =
-    ThreadLocalRandom.current().nextFloat() * this
+fun Float.random() = ThreadLocalRandom.current().nextFloat() * this
 
-fun Int.random() =
-    ThreadLocalRandom.current().nextInt(this)
 
-fun IntSize.randomPosition() =
-    Offset(width.random().toFloat(), height.random().toFloat())
+
+fun Int.random() = Random.nextInt(this)
+
+fun IntSize.randomPosition() = Offset(width.random().toFloat(), height.random().toFloat())
 
 // 빽빽도
 private const val snowflakeDensity = 0.3
