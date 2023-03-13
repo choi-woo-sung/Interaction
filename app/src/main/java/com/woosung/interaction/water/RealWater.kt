@@ -280,9 +280,7 @@ internal fun lerp2(start: Float, stop: Float, fraction: Float) =
 @Preview
 @Composable
 fun a3() {
-    val test = remember {
-        Animatable(0f)
-    }
+    val test = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
         test.animateTo(1f, tween(30000))
