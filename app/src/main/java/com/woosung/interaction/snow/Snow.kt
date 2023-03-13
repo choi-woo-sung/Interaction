@@ -1,5 +1,6 @@
 package com.woosung.interaction.snow
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
@@ -21,11 +22,11 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.nanoseconds
 
 internal fun Modifier.snowfall() = composed {
-    var snowflakesState by remember {
-        mutableStateOf(SnowflakesState(-1, IntSize(0, 0)))
+    var snowflakesState by remember { mutableStateOf(SnowflakesState(-1, IntSize(0, 0)))
     }
 
     LaunchedEffect(Unit) {
@@ -56,14 +57,13 @@ internal fun Modifier.snowfall() = composed {
 fun ClosedRange<Float>.random() =
     ThreadLocalRandom.current().nextFloat() * (endInclusive - start) + start
 
-fun Float.random() =
-    ThreadLocalRandom.current().nextFloat() * this
+fun Float.random() = ThreadLocalRandom.current().nextFloat() * this
 
-fun Int.random() =
-    ThreadLocalRandom.current().nextInt(this)
 
-fun IntSize.randomPosition() =
-    Offset(width.random().toFloat(), height.random().toFloat())
+
+fun Int.random() = Random.nextInt(this)
+
+fun IntSize.randomPosition() = Offset(40f, 0f)
 
 // 빽빽도
 private const val snowflakeDensity = 0.3
@@ -92,7 +92,8 @@ internal data class SnowflakesState(
         private fun createSnowflakes(canvasSize: IntSize): List<Snowflake> {
             val canvasArea = canvasSize.width * canvasSize.height
             val normalizedDensity = snowflakeDensity.coerceIn(0.0..1.0) / 1000.0
-            val snowflakesCount = (canvasArea * normalizedDensity).roundToInt()
+//            val snowflakesCount = (canvasArea * normalizedDensity).roundToInt()
+            val snowflakesCount = 1
 
             return List(snowflakesCount) {
                 Snowflake(
@@ -126,13 +127,13 @@ internal class Snowflake(
 
     fun update(elapsedMillis: Long) {
         // 초마다 움직이는 증가량
-        val increment =
-            incrementFactor * (elapsedMillis / baseFrameDurationMillis) * baseSpeedPxAt60Fps
-
+        val increment = incrementFactor * (elapsedMillis / baseFrameDurationMillis) * baseSpeedPxAt60Fps
+        Log.d("increment" , increment.toString())
         val xDelta = (increment * cos(angle)).toFloat()
 
         val yDelta = (increment * sin(angle)).toFloat()
         position = Offset(position.x + xDelta, position.y + yDelta)
+
         angle += angleSeedRange.random() / angleDivisor
 
         // y포지션이 height+size보다 낮아질때, 다시 위로 올린다.
