@@ -16,4 +16,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          LANGUAGE: Chinese
+      - run: echo "::${{ secrets.GITHUB_TOKEN }}"
+      - run: echo "::${{ secrets.OPENAI_API_KEY }}"
