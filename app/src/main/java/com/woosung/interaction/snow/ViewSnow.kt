@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.IntSize
 import com.woosung.interaction.ext.dpToPx
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.isActive
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -74,6 +75,8 @@ class Snow(
     position: Offset,
     val screenSize: IntSize,
     private val incrementRange: Float,
+    angle: Float,
+
 ) {
 
     val paint: Paint = Paint().apply {
@@ -84,25 +87,38 @@ class Snow(
 
     // 초기 위치는 정해져있지만, 값은 변화해야한다.
     private var position by mutableStateOf(position)
-
+    private var angle by mutableStateOf(angle)
     fun draw(canvas: Canvas) {
         canvas.drawCircle(position, size, paint)
     }
 
     fun update() {
+        // speed
         val increment = incrementRange.random()
-        val xAngle = (increment * cos((angleSeedRange.random())))
 
-        val yAngle = (increment * sin(angleSeedRange.random()))
+        val xAngle = (increment * cos((angle)))
+
+        val yAngle = (increment * sin((angle)))
+
+        angle += angleSeedRange.random() / 1000f
 
         position =
-            if (position.y > screenSize.height) position.copy(y = 0f) else position.copy(y = position.y + incrementRange)
+            if (position.x > screenSize.width || position.x < 0f) {
+                position.copy(x = screenSize.width.random().toFloat() , y = 0f)
+            } else if (position.y > screenSize.height) {
+                position.copy(y = 0f)
+            } else {
+                position.copy(
+                    x = position.x + xAngle,
+                    y = position.y + yAngle,
+                )
+            }
     }
 }
 
 private const val angleSeed = 25.0f
 private val angleSeedRange = -angleSeed..angleSeed
-private val incrementRange = 1.4f..1.8f
+private val incrementRange = 1.2f..1.8f
 
 fun createSnowList(canvas: IntSize): List<Snow> {
     return List(200) {
@@ -110,10 +126,11 @@ fun createSnowList(canvas: IntSize): List<Snow> {
             size = 20f,
             position = Offset(
                 x = canvas.width.randomTest().toFloat(),
-                y = 1f * incrementRange.random()
+                y = canvas.height.randomTest().toFloat(),
             ),
             canvas,
-            incrementRange = incrementRange.random()
+            incrementRange = incrementRange.random(),
+            angle = angleSeedRange.random() + (Math.PI.toFloat() / 2.0f),
         )
     }
 }
