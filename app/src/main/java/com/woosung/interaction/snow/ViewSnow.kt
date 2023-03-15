@@ -119,7 +119,7 @@ class Snow(
 
 private const val angleSeed = 30.0f
 private val angleSeedRange = -angleSeed..angleSeed
-private val incrementRange = 2.0f..2.4f
+private val incrementRange = 1.04f..1.8f
 
 fun createSnowList(canvas: IntSize): List<Snow> {
     return List(200) {
