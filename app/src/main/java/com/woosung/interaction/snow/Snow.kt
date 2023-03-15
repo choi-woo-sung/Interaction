@@ -139,6 +139,7 @@ internal class Snowflake(
         // y포지션이 height+size보다 낮아질때, 다시 위로 올린다.
         if (position.y > canvasSize.height + size) {
             position = Offset(position.x, -size)
+            ""
         }
     }
 
