@@ -1,5 +1,6 @@
 package com.woosung.interaction.snow
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
@@ -51,7 +53,8 @@ fun SnowScreen() {
     Canvas(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black),
+            .background(Color.Black)
+            .clipToBounds(),
     ) {
         val canvas = drawContext.canvas
         for (snow in snowState.snows) {
@@ -75,7 +78,7 @@ class Snow(
     position: Offset,
     val screenSize: IntSize,
     private val incrementRange: Float,
-    angle: Float,
+    angle: Double,
 
 ) {
 
@@ -96,16 +99,16 @@ class Snow(
         // speed
         val increment = incrementRange.random()
 
-        val xAngle = (increment * cos((angle)))
-
-        val yAngle = (increment * sin((angle)))
-
+        val xAngle = (increment * cos((angle))).toFloat()
+        val yAngle = (increment * sin((angle))).toFloat()
+        Log.d("test", "update: position.x = $xAngle")
+        Log.d("test", "angle = $angle")
+        Log.d("test", "update: position.y = $yAngle")
         angle += angleSeedRange.random() / 10000f
-
         position =
-            if (position.x > screenSize.width || position.x < 0f) {
+/*            if (position.x > screenSize.width || position.x < 0f) {
                 position.copy(x = screenSize.width.random().toFloat(), y = 0f)
-            } else if (position.y > screenSize.height) {
+            } else*/ if (position.y > screenSize.height) {
                 position.copy(y = 0f)
             } else {
                 position.copy(
@@ -117,21 +120,21 @@ class Snow(
 }
 // 1라디안 57.3도
 
-private const val angleSeed = 30.0f
+private const val angleSeed = 25.0f
 private val angleSeedRange = -angleSeed..angleSeed
-private val incrementRange = 1.04f..1.8f
+private val incrementRange = 2f..2.5f
 
 fun createSnowList(canvas: IntSize): List<Snow> {
-    return List(200) {
+    return List(100) {
         Snow(
-            size = 20f,
+            size = (1f..15f).random(),
             position = Offset(
                 x = canvas.width.randomTest().toFloat(),
                 y = canvas.height.randomTest().toFloat(),
             ),
             canvas,
             incrementRange = incrementRange.random(),
-            angle = angleSeed.random() / angleSeed * 0.1f + (PI.toFloat() / 2.0.toFloat()),
+            angle = (PI / 2.0) + (angleSeed.random() / angleSeed * 0.1f),
         )
     }
 }
