@@ -100,11 +100,11 @@ class Snow(
 
         val yAngle = (increment * sin((angle)))
 
-        angle += angleSeedRange.random() / 1000f
+        angle += angleSeedRange.random() / 10000f
 
         position =
             if (position.x > screenSize.width || position.x < 0f) {
-                position.copy(x = screenSize.width.random().toFloat() , y = 0f)
+                position.copy(x = screenSize.width.random().toFloat(), y = 0f)
             } else if (position.y > screenSize.height) {
                 position.copy(y = 0f)
             } else {
@@ -115,10 +115,11 @@ class Snow(
             }
     }
 }
+// 1라디안 57.3도
 
-private const val angleSeed = 25.0f
+private const val angleSeed = 30.0f
 private val angleSeedRange = -angleSeed..angleSeed
-private val incrementRange = 1.2f..1.8f
+private val incrementRange = 2.0f..2.4f
 
 fun createSnowList(canvas: IntSize): List<Snow> {
     return List(200) {
@@ -130,7 +131,7 @@ fun createSnowList(canvas: IntSize): List<Snow> {
             ),
             canvas,
             incrementRange = incrementRange.random(),
-            angle = angleSeedRange.random() + (Math.PI.toFloat() / 2.0f),
+            angle = angleSeed.random() / angleSeed * 0.1f + (PI.toFloat() / 2.0.toFloat()),
         )
     }
 }

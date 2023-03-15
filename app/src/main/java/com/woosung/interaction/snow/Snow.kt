@@ -93,7 +93,7 @@ internal data class SnowflakesState(
             val canvasArea = canvasSize.width * canvasSize.height
             val normalizedDensity = snowflakeDensity.coerceIn(0.0..1.0) / 1000.0
 //            val snowflakesCount = (canvasArea * normalizedDensity).roundToInt()
-            val snowflakesCount = 1
+            val snowflakesCount = 400
 
             return List(snowflakesCount) {
                 Snowflake(
@@ -101,7 +101,7 @@ internal data class SnowflakesState(
                     size = sizeRange.random(),
                     canvasSize = canvasSize,
                     position = canvasSize.randomPosition(),
-                    angle = angleSeed.random() / angleSeed * angleRange + (PI / 2.0) - (angleRange / 2.0),
+                    angle = angleSeed.random() / angleSeed * angleRange + (PI / 2.0),
                 )
             }
         }
