@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.nanoseconds
 
 internal fun Modifier.snowfall() = composed {
     var snowflakesState by remember {
-        mutableStateOf(SnowflakesState(-1, IntSize(0, 0)))
+        mutableStateOf(SnowflakesState(0, IntSize(0, 0)))
     }
 
     LaunchedEffect(Unit) {
@@ -39,7 +39,7 @@ internal fun Modifier.snowfall() = composed {
 
                 if (wasFirstRun) return@withFrameNanos
                 for (snowflake in snowflakesState.snowflakes) {
-                    snowflake.update(elapsedMillis)
+                    snowflake.update()
                 }
             }
         }
@@ -61,7 +61,7 @@ fun Float.random() = ThreadLocalRandom.current().nextFloat() * this
 
 fun Int.random() = Random.nextInt(this)
 
-fun IntSize.randomPosition() = Offset(width.random().toFloat(), height.random().toFloat())
+fun IntSize.randomPosition() = Offset(width.randomTest().toFloat(), height.randomTest().toFloat())
 
 // 빽빽도
 private const val snowflakeDensity = 0.3
@@ -123,7 +123,7 @@ internal class Snowflake(
     private var position by mutableStateOf(position)
     private var angle by mutableStateOf(angle)
 
-    fun update(elapsedMillis: Long) {
+    fun update() {
         // 초마다 움직이는 증가량
 //        val increment = incrementFactor * (elapsedMillis / baseFrameDurationMillis) * baseSpeedPxAt60Fps
 
@@ -156,7 +156,7 @@ internal class Snowflake(
 
 @Preview
 @Composable
-fun a() {
+fun TrueSnow() {
     Surface(modifier = Modifier.fillMaxSize().snowfall(), color = Color.Black) {
     }
 }
