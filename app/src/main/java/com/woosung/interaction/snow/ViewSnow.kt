@@ -100,6 +100,8 @@ class Snow(
 
         increment += incrementPerNanoFrame
 
+        increment.coerceIn(0.6f.. 2.0f)
+
         val xAngle = (increment * cos((angle))).toFloat()
         val yAngle = (increment * sin((angle))).toFloat()
         Log.d("test", "update: position.x = $xAngle")
@@ -124,7 +126,7 @@ class Snow(
 private const val angleSeed = 25.0f
 private val angleSeedRange = -angleSeed..angleSeed
 private val incrementRange = 0.8f..1.5f
-private val incrementPerNanoFrame = (-1f..1f).random() / 1000f
+private val incrementPerNanoFrame = (-1f..1f).random() / 10000f
 
 fun createSnowList(canvas: IntSize): List<Snow> {
     return List(100) {

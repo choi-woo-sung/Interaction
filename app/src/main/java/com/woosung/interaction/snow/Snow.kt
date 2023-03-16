@@ -37,8 +37,7 @@ internal fun Modifier.snowfall() = composed {
         }
 }
 
-fun ClosedRange<Float>.random() =
-    ThreadLocalRandom.current().nextFloat() * (endInclusive - start) + start
+fun ClosedRange<Float>.random() = ThreadLocalRandom.current().nextFloat() * (endInclusive - start) + start
 
 fun Float.random() =
     ThreadLocalRandom.current().nextFloat() * this
