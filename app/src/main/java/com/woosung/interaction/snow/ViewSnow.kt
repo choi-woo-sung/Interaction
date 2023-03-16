@@ -75,7 +75,7 @@ class Snow(
     position: Offset,
     val screenSize: IntSize,
     private val incrementRange: Float,
-    angle: Float,
+    angle: Double,
 
 ) {
 
@@ -109,8 +109,8 @@ class Snow(
                 position.copy(y = 0f)
             } else {
                 position.copy(
-                    x = position.x + xAngle,
-                    y = position.y + yAngle,
+                    x = position.x + xAngle.toFloat(),
+                    y = position.y + yAngle.toFloat(),
                 )
             }
     }
@@ -119,7 +119,7 @@ class Snow(
 
 private const val angleSeed = 30.0f
 private val angleSeedRange = -angleSeed..angleSeed
-private val incrementRange = 1.04f..1.8f
+private val incrementRange = 1.04f..1.14f
 
 fun createSnowList(canvas: IntSize): List<Snow> {
     return List(200) {
@@ -131,7 +131,7 @@ fun createSnowList(canvas: IntSize): List<Snow> {
             ),
             canvas,
             incrementRange = incrementRange.random(),
-            angle = angleSeed.random() / angleSeed * 0.1f + (PI.toFloat() / 2.0.toFloat()),
+            angle = angleSeed.random() / angleSeed * 0.1f + (PI.toFloat() / 2.0.toFloat()) - (angleRange / 2.0),
         )
     }
 }
