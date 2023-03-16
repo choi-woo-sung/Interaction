@@ -77,7 +77,7 @@ class Snow(
     val size: Float,
     position: Offset,
     val screenSize: IntSize,
-    private val incrementRange: Float,
+    private var increment: Float,
     angle: Double,
 
 ) {
@@ -97,7 +97,8 @@ class Snow(
 
     fun update() {
         // speed
-        val increment = incrementRange.random()
+
+        increment += incrementPerNanoFrame
 
         val xAngle = (increment * cos((angle))).toFloat()
         val yAngle = (increment * sin((angle))).toFloat()
@@ -122,7 +123,8 @@ class Snow(
 
 private const val angleSeed = 25.0f
 private val angleSeedRange = -angleSeed..angleSeed
-private val incrementRange = 2f..2.5f
+private val incrementRange = 0.8f..1.5f
+private val incrementPerNanoFrame = (-1f..1f).random() / 1000f
 
 fun createSnowList(canvas: IntSize): List<Snow> {
     return List(100) {
@@ -133,7 +135,7 @@ fun createSnowList(canvas: IntSize): List<Snow> {
                 y = canvas.height.randomTest().toFloat(),
             ),
             canvas,
-            incrementRange = incrementRange.random(),
+            increment = incrementRange.random(),
             angle = (PI / 2.0) + (angleSeed.random() / angleSeed * 0.1f),
         )
     }
