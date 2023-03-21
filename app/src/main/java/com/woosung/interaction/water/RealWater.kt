@@ -13,10 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -63,12 +61,7 @@ fun WaterAnimation2(
                         currentY,
                         animatedY,
                     ),
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF41E0E0),
-                            Color(0xFF279ED5),
-                        ),
-                    ),
+                    color = androidx.compose.ui.graphics.Color.Black,
                 )
 
                 drawPath(
@@ -79,7 +72,7 @@ fun WaterAnimation2(
                         animatedY,
                     ),
                     alpha = .5f,
-                    color = androidx.compose.ui.graphics.Color.Cyan,
+                    color = androidx.compose.ui.graphics.Color.Black,
                 )
 
                 drawPath(
@@ -90,7 +83,7 @@ fun WaterAnimation2(
                         animatedY,
                     ),
                     alpha = .3f,
-                    color = androidx.compose.ui.graphics.Color.Cyan,
+                    color = androidx.compose.ui.graphics.Color.Black,
                 )
 
                 val paint = Paint().asFrameworkPaint()
@@ -103,16 +96,16 @@ fun WaterAnimation2(
                     blendMode = BlendMode.XOR
                 }
 
-                drawIntoCanvas {
-                    it.nativeCanvas.apply {
-                        drawText(
-                            depthMeasurement,
-                            width / 2f,
-                            height / 2f,
-                            paint,
-                        )
-                    }
-                }
+//                drawIntoCanvas {
+//                    it.nativeCanvas.apply {
+//                        drawText(
+//                            depthMeasurement,
+//                            width / 2f,
+//                            height / 2f,
+//                            paint,
+//                        )
+//                    }
+//                }
 
                 (0..60).forEach {
                     val y = it * (size.height / 60)
@@ -287,7 +280,7 @@ fun a3() {
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = androidx.compose.ui.graphics.Color.Black,
+        color = androidx.compose.ui.graphics.Color.Cyan,
     ) {
         WaterAnimation2(test.value, "호호")
     }

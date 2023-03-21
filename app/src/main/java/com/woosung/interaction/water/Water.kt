@@ -70,28 +70,28 @@ fun WaterAnimation(
                         ),
                     ),
                 )
-//
-//                drawPath(
-//                    path = ayPath(
-//                        aYs2,
-//                        size,
-//                        currentY,
-//                        animatedY,
-//                    ),
-//                    alpha = .5f,
-//                    color = androidx.compose.ui.graphics.Color.Cyan,
-//                )
-//
-//                drawPath(
-//                    path = ayPath(
-//                        aYs3,
-//                        size,
-//                        currentY,
-//                        animatedY,
-//                    ),
-//                    alpha = .3f,
-//                    color = androidx.compose.ui.graphics.Color.Cyan,
-//                )
+
+                drawPath(
+                    path = ayPath(
+                        aYs2,
+                        size,
+                        currentY,
+                        animatedY,
+                    ),
+                    alpha = .5f,
+                    color = androidx.compose.ui.graphics.Color.Cyan,
+                )
+
+                drawPath(
+                    path = ayPath(
+                        aYs3,
+                        size,
+                        currentY,
+                        animatedY,
+                    ),
+                    alpha = .3f,
+                    color = androidx.compose.ui.graphics.Color.Cyan,
+                )
 
 //                val paint = androidx.compose.ui.graphics.Paint().asFrameworkPaint()
 //                paint.apply {
