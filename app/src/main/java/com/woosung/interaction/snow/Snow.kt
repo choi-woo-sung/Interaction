@@ -44,6 +44,7 @@ internal fun Modifier.snowfall() = composed {
         }
     }
 
+
     onSizeChanged { newSize -> snowflakesState = snowflakesState.resize(newSize) }
         .clipToBounds()
         .drawWithContent {
