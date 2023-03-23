@@ -1,8 +1,5 @@
 package com.woosung.interaction.water
 
-import android.graphics.BlendMode
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.*
@@ -17,7 +14,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import kotlin.random.Random
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -85,58 +81,6 @@ fun WaterAnimation2(
                     alpha = .3f,
                     color = androidx.compose.ui.graphics.Color.Black,
                 )
-
-                val paint = Paint().asFrameworkPaint()
-                paint.apply {
-                    isAntiAlias = true
-                    textSize = 100.sp.toPx()
-                    typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-                    color = Color.parseColor("#41E0E0")
-                    textAlign = android.graphics.Paint.Align.CENTER
-                    blendMode = BlendMode.XOR
-                }
-
-//                drawIntoCanvas {
-//                    it.nativeCanvas.apply {
-//                        drawText(
-//                            depthMeasurement,
-//                            width / 2f,
-//                            height / 2f,
-//                            paint,
-//                        )
-//                    }
-//                }
-
-                (0..60).forEach {
-                    val y = it * (size.height / 60)
-                    val lineWidth = if (it % 10 == 0) 80f else 40f
-                    val strokeWidth = 4f
-//                    drawLine(
-//                        start = Offset(0f, y),
-//                        end = Offset(lineWidth, y),
-//                        brush = Brush.verticalGradient(
-//                            colors = listOf(
-//                                Color(0xFF41E0E0),
-//                                Color(0xFF279ED5),
-//                            ),
-//                        ),
-//                        blendMode = androidx.compose.ui.graphics.BlendMode.Xor,
-//                        strokeWidth = strokeWidth,
-//                    )
-
-//                    drawLine(
-//                        start = Offset(size.width, y),
-//                        end = Offset(size.width - lineWidth, y),
-//                        brush = Brush.verticalGradient(
-//                            colors = listOf(
-//                                Color(0xFF41E0E0),
-//                                Color(0xFF279ED5),
-//                            ),
-//                        ),
-//                        blendMode = androidx.compose.ui.graphics.BlendMode.Xor,
-//                        strokeWidth = strokeWidth,
-//                    )
-                }
             },
         )
     }
@@ -149,13 +93,28 @@ fun ayPath2(aYs: List<Int>, size: Size, currentY: Float, animatedY: Float): Path
         moveTo(0f, 0f)
         lineTo(0f, animatedY)
 
-        // 구간의 크기를 나타내며, size.width  값을 나타냄.
+        // size.width 나누기
         val interval = size.width * (1 / (aYs.size + 1).toFloat())
         aYs.forEachIndexed { index, y ->
             // 파도를 그릴때 한 구간을 나타낸다.  x좌표를 계산하는데 사용한다.
             val segmentIndex = (index + 1) / (aYs.size + 1).toFloat()
-            // x는 width값의
+
+            // x는 width값의  ex 8개면 0.125 * size.width
             val x = size.width * segmentIndex
+//            lineTo(
+//                if (index == 0) 0f else x - interval / 2f,
+//                aYs.getOrNull(index - 1)?.toFloat() ?: currentY
+//            )
+//
+//            lineTo(
+//                x - interval / 2f,
+//                y.toFloat()
+//            )
+//
+//            lineTo(
+//                 x,
+//                y.toFloat()
+//            )
             cubicTo(
                 x1 = if (index == 0) 0f else x - interval / 2f,
                 y1 = aYs.getOrNull(index - 1)?.toFloat() ?: currentY,
@@ -190,8 +149,8 @@ fun ayPath2(aYs: List<Int>, size: Size, currentY: Float, animatedY: Float): Path
  */
 @Composable
 fun calculateYs2(height: Int, waterLevel: Float, intensityMultiplier: Float): List<Int> {
-    // 토탈에 따라 파도의 수가 달라짐
-    val total = 10
+    // 파도의 개수
+    val total = 6
     return (0..total).map {
         calculateY2(
             height = height,
@@ -208,22 +167,22 @@ fun calculateYs2(height: Int, waterLevel: Float, intensityMultiplier: Float): Li
  *
  * @param height 물높이
  * @param waterLevel 물의 레벨
- * @param intensity 많을수록 탄력이 커진다.(좀더 팡팡티긴다.)
+ * @param intensity 강도 많을수록 탄력이 커진다.(좀더 팡팡티긴다.)
  * @return
  */
 @Composable
 fun calculateY2(height: Int, waterLevel: Float, intensity: Float): Int {
-    val density = LocalDensity.current
-
     var y1 by remember { mutableStateOf(0) }
 
     val duration = remember { Random.nextInt(300) + 300 }
 
     // 이걸 더해서 파도를 만들어낼 수 있다.
     val yNoiseAnimation = rememberInfiniteTransition()
+
+    // 파도의 높이 계산
     val yNoise by yNoiseAnimation.animateFloat(
-        initialValue = 25f,
-        targetValue = -25f,
+        initialValue = 40f,
+        targetValue = -40f,
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = duration,
@@ -234,19 +193,6 @@ fun calculateY2(height: Int, waterLevel: Float, intensity: Float): Int {
     )
 
     LaunchedEffect(key1 = waterLevel, block = {
-        val nextY = (waterLevel * height).toInt()
-        val midPoint = height / 2
-        val textHeight = with(density) { 100.sp.roundToPx() }
-        y1 = if (nextY in (midPoint - textHeight)..(midPoint)) {
-            lerp2(
-                midPoint - textHeight.toFloat(),
-                (waterLevel * height),
-                (1f - intensity) * .4f,
-            ).toInt()
-        } else {
-            (waterLevel * height).toInt()
-        }
-
         // 물의 평균위치
         y1 = (waterLevel * height).toInt()
 
@@ -259,15 +205,12 @@ fun calculateY2(height: Int, waterLevel: Float, intensity: Float): Int {
         targetValue = y1,
         animationSpec = spring(
             dampingRatio = 1f - intensity,
-            stiffness = 100f, // Spring.StiffnessVeryLow
+            stiffness = Spring.StiffnessHigh, // Spring.StiffnessVeryLow
         ),
     )
 
     return ay1
 }
-
-internal fun lerp2(start: Float, stop: Float, fraction: Float) =
-    (start * (1 - fraction) + stop * fraction)
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Preview

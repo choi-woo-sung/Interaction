@@ -4,82 +4,61 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
-
-data class WaveConfig(
-    val waveHeight: Float,
-    val waveSpeed: Float,
-    val waveColor: Color,
-    val waveLengthMultiplier: Float
-)
+import androidx.compose.ui.unit.dp
+import java.lang.Math.PI
+import java.lang.Math.sin
 
 @Composable
 fun WaveAnimation(
-    waveConfigs: List<WaveConfig>
+    color: Color = Color.Blue,
+    waveHeight: Float = 50f,
+    durationMillis: Int = 1000,
+    animationSpec: AnimationSpec<Float> = infiniteRepeatable(tween(durationMillis))
 ) {
+    val waveProgress = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        waveProgress.animateTo(1f, animationSpec = animationSpec)
+    }
+
     Canvas(modifier = Modifier.fillMaxSize()) {
-        val width = size.width
-        val height = size.height
+        val path = Path()
+        val amplitude = waveHeight / 2
 
-
-        waveConfigs.forEach { config ->
-
-            
-
-            val path = Path()
-            val waveLength = width * config.waveLengthMultiplier
-            val halfWaveLength = waveLength / 2
-
-            path.moveTo(0f, height / 2)
-
-            for (i in 0..width.toInt() step halfWaveLength.toInt()) {
-                val x1 = i.toFloat() + (waveLength * wavePhase)
-                val y1 = height / 2 + if (i % waveLength == 0f) config.waveHeight else -config.waveHeight
-                val x2 = i + halfWaveLength.toFloat() + (waveLength * wavePhase)
-                val y2 = height / 2 + if (i % waveLength == 0f) -config.waveHeight else config.waveHeight
-                val x3 = i + waveLength.toFloat() + (waveLength * wavePhase)
-
-                path.cubicTo(
-                    x1, y1,
-                    x2, y2,
-                    x3, height / 2
-                )
+        for (x in 0..size.width.toInt()) {
+            val y = size.height / 2 + amplitude * sin((2 * PI * (x + waveProgress.value * size.width)) / size.width).toFloat()
+            if (x == 0) {
+                path.moveTo(x.toFloat(), y)
+            } else {
+                path.lineTo(x.toFloat(), y)
             }
-
-            drawPath(path, config.waveColor)
         }
+
+        path.lineTo(size.width, size.height)
+        path.lineTo(0f, size.height)
+        path.close()
+
+        drawPath(
+            path = path,
+            color = color,
+            style = Stroke(width = 1.dp.toPx() , cap = StrokeCap.Round) ,
+        )
     }
 }
 
 @Preview
 @Composable
 fun WaveAnimationPreview() {
-    WaveAnimation(
-        waveConfigs = listOf(
-            WaveConfig(
-                waveHeight = 50f,
-                waveSpeed = 2000f,
-                waveColor = Color(0x550080FF),
-                waveLengthMultiplier = 1f
-            ),
-            WaveConfig(
-                waveHeight = 40f,
-                waveSpeed = 3000f,
-                waveColor = Color(0x990080FF),
-                waveLengthMultiplier = 1.5f
-            ),
-            WaveConfig(
-                waveHeight = 30f,
-                waveSpeed = 4000f,
-                waveColor = Color(0xFF0080FF),
-                waveLengthMultiplier = 2f
-            )
-        )
-    )
+    WaveAnimation()
 }
