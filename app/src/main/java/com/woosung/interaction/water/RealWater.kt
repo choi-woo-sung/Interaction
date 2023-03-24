@@ -99,22 +99,8 @@ fun ayPath2(aYs: List<Int>, size: Size, currentY: Float, animatedY: Float): Path
             // 파도를 그릴때 한 구간을 나타낸다.  x좌표를 계산하는데 사용한다.
             val segmentIndex = (index + 1) / (aYs.size + 1).toFloat()
 
-            // x는 width값의  ex 8개면 0.125 * size.width
             val x = size.width * segmentIndex
-//            lineTo(
-//                if (index == 0) 0f else x - interval / 2f,
-//                aYs.getOrNull(index - 1)?.toFloat() ?: currentY
-//            )
-//
-//            lineTo(
-//                x - interval / 2f,
-//                y.toFloat()
-//            )
-//
-//            lineTo(
-//                 x,
-//                y.toFloat()
-//            )
+
             cubicTo(
                 x1 = if (index == 0) 0f else x - interval / 2f,
                 y1 = aYs.getOrNull(index - 1)?.toFloat() ?: currentY,
