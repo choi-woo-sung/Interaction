@@ -57,7 +57,7 @@ fun WaterAnimation2(
                         currentY,
                         animatedY,
                     ),
-                    color = androidx.compose.ui.graphics.Color.Black,
+                    color = androidx.compose.ui.graphics.Color.White,
                 )
 
                 drawPath(
@@ -68,7 +68,7 @@ fun WaterAnimation2(
                         animatedY,
                     ),
                     alpha = .5f,
-                    color = androidx.compose.ui.graphics.Color.Black,
+                    color = androidx.compose.ui.graphics.Color.White,
                 )
 
                 drawPath(
@@ -79,7 +79,7 @@ fun WaterAnimation2(
                         animatedY,
                     ),
                     alpha = .3f,
-                    color = androidx.compose.ui.graphics.Color.Black,
+                    color = androidx.compose.ui.graphics.Color.White,
                 )
             },
         )
@@ -191,7 +191,7 @@ fun calculateY2(height: Int, waterLevel: Float, intensity: Float): Int {
         targetValue = y1,
         animationSpec = spring(
             dampingRatio = 1f - intensity,
-            stiffness = Spring.StiffnessLow, // Spring.StiffnessVeryLow
+            stiffness = 100f, // Spring.StiffnessVeryLow
         ),
     )
 
@@ -209,7 +209,7 @@ fun a3() {
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = androidx.compose.ui.graphics.Color.Cyan,
+        color = androidx.compose.ui.graphics.Color.Blue,
     ) {
         WaterAnimation2(test.value, "호호")
     }
