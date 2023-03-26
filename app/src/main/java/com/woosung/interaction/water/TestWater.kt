@@ -75,9 +75,9 @@ fun DrawWavePreview() {
     ) {
         drawPath(
             path = DrawWave(
-                listOf(560, 680, 730, 320, 400, 320),
+                listOf(400, 430, 410, 390, 380, 360),
                 width = size.width.roundToInt(),
-                600f,
+                400f,
             ),
             color = Color.Black,
         )

@@ -191,7 +191,7 @@ fun calculateY2(height: Int, waterLevel: Float, intensity: Float): Int {
         targetValue = y1,
         animationSpec = spring(
             dampingRatio = 1f - intensity,
-            stiffness = Spring.StiffnessHigh, // Spring.StiffnessVeryLow
+            stiffness = Spring.StiffnessLow, // Spring.StiffnessVeryLow
         ),
     )
 
