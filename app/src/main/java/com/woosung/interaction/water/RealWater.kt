@@ -20,7 +20,6 @@ import kotlin.random.Random
 @Composable
 fun WaterAnimation2(
     waterLevel: Float,
-    depthMeasurement: String,
 ) = BoxWithConstraints {
     val density = LocalDensity.current
     val height = with(density) { maxHeight.roundToPx() }
@@ -181,7 +180,6 @@ fun calculateY2(height: Int, waterLevel: Float, intensity: Float): Int {
     LaunchedEffect(key1 = waterLevel, block = {
         // 물의 평균위치
         y1 = (waterLevel * height).toInt()
-
         // 물의 평균위치 + yNoise 값
         y1 = (y1 + yNoise).toInt()
     })
@@ -211,6 +209,6 @@ fun a3() {
         modifier = Modifier.fillMaxSize(),
         color = androidx.compose.ui.graphics.Color.Blue,
     ) {
-        WaterAnimation2(test.value, "호호")
+        WaterAnimation2(test.value)
     }
 }
