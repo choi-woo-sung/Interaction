@@ -159,8 +159,10 @@ fun calculateYs2(height: Int, waterLevel: Float, intensityMultiplier: Float): Li
 fun calculateY2(height: Int, waterLevel: Float, intensity: Float): Int {
     var y1 by remember { mutableStateOf(0) }
 
-    val duration = remember { Random.nextInt(300) +
-            300 }
+    val duration = remember {
+        Random.nextInt(300) +
+            300
+    }
 
     // 이걸 더해서 파도를 만들어낼 수 있다.
     val yNoiseAnimation = rememberInfiniteTransition()
@@ -181,7 +183,7 @@ fun calculateY2(height: Int, waterLevel: Float, intensity: Float): Int {
     LaunchedEffect(key1 = waterLevel) {
         // 물의 평균위치 + yNoise 값
         y1 = ((waterLevel * height).toInt() + yNoise).toInt()
-    })
+    }
 
     // 감쇠비 변동이 크기
     val ay1 by animateIntAsState(

@@ -72,7 +72,7 @@ private val incrementRange = 0.4f..0.8f
 private val sizeRange = 5.0f..12.0f
 private const val angleSeed = 25.0f
 private val angleSeedRange = -angleSeed..angleSeed
-const val angleRange = 0.1f
+const val angleRange = 0.001f
 private const val angleDivisor = 10000.0f
 
 internal data class SnowflakesState(
@@ -101,7 +101,7 @@ internal data class SnowflakesState(
                     size = sizeRange.random(),
                     canvasSize = canvasSize,
                     position = canvasSize.randomPosition(),
-                    angle = angleSeed.random() / angleSeed * angleRange + (PI / 2.0) - (angleRange / 2.0),
+                    angle = angleSeedRange.random() / angleSeed * angleRange + (PI / 2.0),
                 )
             }
         }

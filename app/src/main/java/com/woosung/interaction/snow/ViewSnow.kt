@@ -94,7 +94,9 @@ class Snow(
 
     fun update() {
         // speed
-        val increment = incrementRange.random()
+        var increment = incrementRange
+
+        increment += angle.toFloat()
 
         val xAngle = (increment * cos((angle)))
 
@@ -117,21 +119,23 @@ class Snow(
 }
 // 1라디안 57.3도
 
-private const val angleSeed = 30.0f
+private const val angleSeed = 25.0f
 private val angleSeedRange = -angleSeed..angleSeed
 private val incrementRange = 1.04f..1.14f
+
+private val snowSize = 10f..20f
 
 fun createSnowList(canvas: IntSize): List<Snow> {
     return List(200) {
         Snow(
-            size = 20f,
+            size = snowSize.random(),
             position = Offset(
                 x = canvas.width.randomTest().toFloat(),
                 y = canvas.height.randomTest().toFloat(),
             ),
             canvas,
             incrementRange = incrementRange.random(),
-            angle = angleSeed.random() / angleSeed * 0.1f + (PI.toFloat() / 2.0.toFloat()) - (angleRange / 2.0),
+            angle = (angleSeed.random() / angleSeed * 0.1f + (PI.toFloat() / 2.0.toFloat())).toDouble(),
         )
     }
 }
