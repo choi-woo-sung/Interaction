@@ -2,10 +2,15 @@ package com.woosung.interaction.water
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -18,11 +23,27 @@ import kotlin.math.roundToInt
 @Composable
 fun Water(
     waterLevel: Float,
-    depthMeasurement: String,
 ) = BoxWithConstraints {
+    require(waterLevel in 0f..1f) { "여기 사이에 있어야함" }
     val density = LocalDensity.current
-    val height = with(density) { maxHeight.roundToPx() }
-    val width = with(density) { maxWidth.roundToPx() }
+    val height = with(density) { maxHeight.toPx() }
+    val width = with(density) { maxWidth.toPx() }
+
+    val currentY = height * waterLevel
+
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val path = Path().apply {
+            moveTo(0f, currentY)
+            lineTo(width, currentY)
+            lineTo(width, height)
+            lineTo(0f, height)
+            close()
+        }
+        drawPath(
+            path = path,
+            color = androidx.compose.ui.graphics.Color.Blue,
+        )
+    }
 }
 
 fun DrawWave(yList: List<Int>, width: Int, waterHeight: Float): Path = Path().apply {
@@ -42,7 +63,6 @@ fun DrawWave(yList: List<Int>, width: Int, waterHeight: Float): Path = Path().ap
 
         cubicTo(
             x1 = if (idx == 0) 0f else x - interval / 2f,
-            // 전에 있었던값을 영향을 받아야하네?
             y1 = yList.getOrNull(idx - 1)?.toFloat() ?: waterHeight,
             // 절반
             x2 = x - interval / 2f,
@@ -63,6 +83,23 @@ fun DrawWave(yList: List<Int>, width: Int, waterHeight: Float): Path = Path().ap
 
     lineTo(width.toFloat(), 0f)
     close()
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+@Preview
+@Composable
+fun WaterPreview() {
+    val test = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        test.animateTo(1f, tween(30000))
+    }
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.White,
+    ) {
+        Water(test.value)
+    }
 }
 
 @Preview

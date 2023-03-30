@@ -38,8 +38,7 @@ fun WaveAnimation(
         val amplitude = waveHeight
 
         for (x in 0..size.width.toInt()) {
-            val y =
-                size.height / 2 + amplitude * sin((2 * PI * (x + waveProgress.value * size.width)) / size.width).toFloat()
+            val y = size.height / 2 + amplitude * sin((2 * PI * (x + waveProgress.value * size.width)) / size.width).toFloat()
             if (x == 0) {
                 path.moveTo(x.toFloat(), y)
             } else {

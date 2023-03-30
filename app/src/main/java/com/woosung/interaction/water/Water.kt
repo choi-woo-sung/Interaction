@@ -37,8 +37,7 @@ fun WaterAnimation(
     // 현재 물높이
     val currentY = height * waterLevel
 
-
-    //계속 감소하면서 통통튀는 Y
+    // 계속 감소하면서 통통튀는 Y
     val animatedY by animateFloatAsState(
         targetValue = height * waterLevel,
         animationSpec = spring(
@@ -149,7 +148,6 @@ fun WaterAnimation(
     }
 }
 
-
 /**
  * 실제 그리기위한 path 경로
  *
@@ -164,9 +162,9 @@ fun ayPath(aYs: List<Int>, size: Size, currentY: Float, animatedY: Float): Path 
         moveTo(0f, 0f)
         lineTo(0f, animatedY)
 
-        val interval = size.width * (1 / (aYs.size + 1).toFloat())
+        val interval = size.width * (1 / (aYs.size).toFloat())
         aYs.forEachIndexed { index, y ->
-            val segmentIndex = (index + 1) / (aYs.size + 1).toFloat()
+            val segmentIndex = (index + 1) / (aYs.size).toFloat()
             val x = size.width * segmentIndex
             cubicTo(
                 x1 = if (index == 0) 0f else x - interval / 2f,
@@ -178,14 +176,14 @@ fun ayPath(aYs: List<Int>, size: Size, currentY: Float, animatedY: Float): Path 
             )
         }
 
-        cubicTo(
-            x1 = size.width - interval / 2f,
-            y1 = aYs.last().toFloat(),
-            x2 = size.width,
-            y2 = animatedY,
-            x3 = size.width,
-            y3 = animatedY,
-        )
+//        cubicTo(
+//            x1 = size.width - interval / 2f,
+//            y1 = aYs.last().toFloat(),
+//            x2 = size.width,
+//            y2 = animatedY,
+//            x3 = size.width,
+//            y3 = animatedY,
+//        )
         lineTo(size.width, 0f)
         close()
     }
@@ -234,24 +232,7 @@ fun calculateY(height: Int, waterLevel: Float, intensity: Float): Int {
 //    )
 
     LaunchedEffect(key1 = waterLevel, block = {
-//        val nextY = (waterLevel * height).toInt()
-//        val midPoint = height / 2
-//        val textHeight = with(density) { 100.sp.roundToPx() }
-//        y1 = if (nextY in (midPoint - textHeight)..(midPoint)) {
-//            lerp(
-//                midPoint - textHeight.toFloat(),
-//                (waterLevel * height),
-//                (1f - intensity) * .4f,
-//            ).toInt()
-//        } else {
-//            (waterLevel * height).toInt()
-//        }
-
-        // 물의 평균위치
         y1 = (waterLevel * height).toInt()
-
-        // 물의 평균위치 + yNoise 값
-//        y1 = (y1 + yNoise).toInt()
     })
 
     // 감쇠비 변동이 크기
