@@ -25,8 +25,9 @@ fun WaterAnimation2(
     val height = with(density) { maxHeight.roundToPx() }
     val width = with(density) { maxWidth.roundToPx() }
 
-    val waterHeightList = calculateYs(height = height, waterLevel = waterLevel)
-
+    val aYs = calculateYs2(height = height, waterLevel = waterLevel, intensityMultiplier = .4f)
+    val aYs2 = calculateYs2(height = height, waterLevel = waterLevel, intensityMultiplier = .5f)
+    val aYs3 = calculateYs2(height = height, waterLevel = waterLevel, intensityMultiplier = .7f)
 
     // 현재 물높이
     val currentY = height * waterLevel
@@ -45,12 +46,11 @@ fun WaterAnimation2(
     ) {
         Canvas(
             modifier = Modifier
-                .graphicsLayer(alpha = 0.99f)
                 .fillMaxSize(),
             onDraw = {
                 drawPath(
                     path = ayPath2(
-                        waterHeightList,
+                        aYs,
                         size,
                         currentY,
                         animatedY,
@@ -58,27 +58,27 @@ fun WaterAnimation2(
                     color = androidx.compose.ui.graphics.Color.White,
                 )
 
-//                drawPath(
-//                    path = ayPath2(
-//                        aYs2,
-//                        size,
-//                        currentY,
-//                        animatedY,
-//                    ),
-//                    alpha = .5f,
-//                    color = androidx.compose.ui.graphics.Color.White,
-//                )
-//
-//                drawPath(
-//                    path = ayPath2(
-//                        aYs3,
-//                        size,
-//                        currentY,
-//                        animatedY,
-//                    ),
-//                    alpha = .3f,
-//                    color = androidx.compose.ui.graphics.Color.White,
-//                )
+                drawPath(
+                    path = ayPath2(
+                        aYs2,
+                        size,
+                        currentY,
+                        animatedY,
+                    ),
+                    alpha = .5f,
+                    color = androidx.compose.ui.graphics.Color.White,
+                )
+
+                drawPath(
+                    path = ayPath2(
+                        aYs3,
+                        size,
+                        currentY,
+                        animatedY,
+                    ),
+                    alpha = .3f,
+                    color = androidx.compose.ui.graphics.Color.White,
+                )
             },
         )
     }
@@ -132,35 +132,44 @@ fun ayPath2(aYs: List<Int>, size: Size, currentY: Float, animatedY: Float): Path
  * @return
  */
 @Composable
-fun calculateYs(height: Int, waterLevel: Float): List<Int> {
+fun calculateYs2(height: Int, waterLevel: Float, intensityMultiplier: Float): List<Int> {
     // 파도의 개수
     val total = 6
     return (0..total).map {
-        calculateY(
+        calculateY2(
             height = height,
             waterLevel = waterLevel,
-
+            // 파도의 개수는 무조건 양수로 떨어진다.
+            // 0.4 0.5 0.7
+            ((if (it > total / 2f) total - it else it) / (total / 2f) * 1f) * intensityMultiplier,
         )
     }.toList()
 }
 
-// 파도의 개수는 무조건 양수로 떨어진다.
-// 0.4 0.5 0.7
-/*            ((if (it > total / 2f) total - it else it) / (total / 2f) * 1f) * intensityMultiplier,*/
-
+/**
+ * TODO
+ *
+ * @param height 물높이
+ * @param waterLevel 물의 레벨
+ * @param intensity 강도 많을수록 탄력이 커진다.(좀더 팡팡티긴다.)
+ * @return
+ */
 @Composable
-fun calculateY(height: Int, waterLevel: Float): Int {
-    var y by remember { mutableStateOf(0) }
+fun calculateY2(height: Int, waterLevel: Float, intensity: Float): Int {
+    var y1 by remember { mutableStateOf(0) }
 
-    val duration = Random.nextInt(300) + 300
+    val duration = remember {
+        Random.nextInt(300) +
+            300
+    }
 
-    // 무한 애니메이션 계속 반복한다.
+    // 이걸 더해서 파도를 만들어낼 수 있다.
     val yNoiseAnimation = rememberInfiniteTransition()
 
     // 파도의 높이 계산
     val yNoise by yNoiseAnimation.animateFloat(
-        initialValue = 40f,
-        targetValue = -40f,
+        initialValue = 25f,
+        targetValue = -25f,
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = duration,
@@ -170,19 +179,22 @@ fun calculateY(height: Int, waterLevel: Float): Int {
         ),
     )
 
-    y = ((waterLevel * height).toInt() + yNoise).toInt()
+    LaunchedEffect(key1 = waterLevel) {
+        // 물의 평균위치 + yNoise 값
+        y1 = ((waterLevel * height).toInt() + yNoise).toInt()
+    }
 
-    return y
+    // 감쇠비 변동이 크기
+    val ay1 by animateIntAsState(
+        targetValue = y1,
+        animationSpec = spring(
+            dampingRatio = 1f - intensity,
+            stiffness = 100f, // Spring.StiffnessVeryLow
+        ),
+    )
+
+    return ay1
 }
-
-//    // 감쇠비 변동이 크기
-//    val ay1 by animateIntAsState(
-//        targetValue = y1,
-//        animationSpec = spring(
-//            dampingRatio = 1f - intensity,
-//            stiffness = 100f, // Spring.StiffnessVeryLow
-//        ),
-//    )
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Preview
