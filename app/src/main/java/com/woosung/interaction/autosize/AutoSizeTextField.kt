@@ -112,7 +112,6 @@ fun AutoSizeTextField(
     scaleFactor: Float = 0.9f,
 
 ) {
-    
     val density = LocalDensity.current
     BoxWithConstraints(
         modifier = modifier,

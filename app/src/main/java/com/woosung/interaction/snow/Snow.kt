@@ -38,11 +38,12 @@ internal fun Modifier.snowfall() = composed {
 
                 if (wasFirstRun) return@withFrameNanos
                 for (snowflake in snowflakesState.snowflakes) {
-                    snowflake.update(elapsedMillis)
+                    snowflake.update()
                 }
             }
         }
     }
+
 
     onSizeChanged { newSize -> snowflakesState = snowflakesState.resize(newSize) }
         .clipToBounds()
@@ -71,7 +72,7 @@ private val incrementRange = 0.4f..0.8f
 private val sizeRange = 5.0f..12.0f
 private const val angleSeed = 25.0f
 private val angleSeedRange = -angleSeed..angleSeed
-private const val angleRange = 0.1f
+const val angleRange = 0.001f
 private const val angleDivisor = 10000.0f
 
 internal data class SnowflakesState(
@@ -100,7 +101,7 @@ internal data class SnowflakesState(
                     size = sizeRange.random(),
                     canvasSize = canvasSize,
                     position = canvasSize.randomPosition(),
-                    angle = angleSeed.random() / angleSeed * angleRange + (PI / 2.0) - (angleRange / 2.0),
+                    angle = angleSeedRange.random() / angleSeed * angleRange + (PI / 2.0),
                 )
             }
         }
@@ -124,21 +125,26 @@ internal class Snowflake(
     private var position by mutableStateOf(position)
     private var angle by mutableStateOf(angle)
 
-    fun update(elapsedMillis: Long) {
-        // 초마다 움직이는 증가량
-        val increment =
-            incrementFactor * (elapsedMillis / baseFrameDurationMillis) * baseSpeedPxAt60Fps
+    fun update() {
+        val increment = incrementRange.random()
 
-        val xDelta = (increment * cos(angle)).toFloat()
+        val xAngle = (increment * cos((angle))).toFloat()
 
-        val yDelta = (increment * sin(angle)).toFloat()
-        position = Offset(position.x + xDelta, position.y + yDelta)
-        angle += angleSeedRange.random() / angleDivisor
+        val yAngle = (increment * sin((angle))).toFloat()
 
-        // y포지션이 height+size보다 낮아질때, 다시 위로 올린다.
-        if (position.y > canvasSize.height + size) {
-            position = Offset(position.x, -size)
-        }
+        angle += angleSeedRange.random() / 10000f
+
+        position =
+            if (position.x > canvasSize.width || position.x < 0f) {
+                position.copy(x = canvasSize.width.random().toFloat(), y = 0f)
+            } else if (position.y > canvasSize.height) {
+                position.copy(y = 0f)
+            } else {
+                position.copy(
+                    x = position.x + xAngle,
+                    y = position.y + yAngle,
+                )
+            }
     }
 
     fun draw(canvas: Canvas) {
