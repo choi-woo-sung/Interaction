@@ -21,3 +21,46 @@ jobs:
         uses: damienaicheh/extract-version-from-tag-action@v1.1.0
         
       - run: echo $MAJOR , $MINOR $PATCH
+      
+      - name: Update gradle version for Android
+        uses: damienaicheh/update-android-version-gradle-action@v1.0.0
+        with:
+          build-gradle-path: './path_to_your/build.gradle'
+          version-code: ${{ env.NUMBER_OF_COMMITS }}
+          version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}'
+          print-file: true
+          
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/buildSrc/**/*.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Generate app APK.
+        run: ./gradlew assembleDebug --stacktrace
+        
+      - name: Sign artifact
+        id: signArtifact
+        uses: r0adkll/sign-android-release@v1.0.1
+        with:
+          releaseDirectory: app/build/outputs/apk/ourbuildtype/release
+          alias: ${{ secrets.KEYALIAS }}
+          signingKeyBase64: ${{ secrets.KEYSTORE }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        
+      - name: Upload Bundle
+        uses: actions/upload-artifact@v2
+        with:
+          name: signed_app_bundle
+          path: app/build/apk/debug/app-debug.apk
+        
+        
+        
